@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ZiliaoshangchuanDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.ziliaoshangchuan_name as ziliaoshangchuanName
+        ,a.ziliaoshangchuan_types as ziliaoshangchuanTypes
+        ,a.ziliaoshangchuan_file as ziliaoshangchuanFile
+        ,a.insert_time as insertTime
+        ,a.ziliaoshangchuan_content as ziliaoshangchuanContent
+        ,a.ziliaoshangchuan_yesno_types as ziliaoshangchuanYesnoTypes
+        ,a.ziliaoshangchuan_yesno_text as ziliaoshangchuanYesnoText
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ZiliaoshangchuanView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM ziliaoshangchuan  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.ziliaoshangchuanName != '' and params.ziliaoshangchuanName != null and params.ziliaoshangchuanName != 'null' ">
+                and a.ziliaoshangchuan_name like CONCAT('%',#{params.ziliaoshangchuanName},'%')
+            </if>
+            <if test="params.ziliaoshangchuanTypes != null and params.ziliaoshangchuanTypes != ''">
+                and a.ziliaoshangchuan_types = #{params.ziliaoshangchuanTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test=" params.ziliaoshangchuanContent != '' and params.ziliaoshangchuanContent != null and params.ziliaoshangchuanContent != 'null' ">
+                and a.ziliaoshangchuan_content like CONCAT('%',#{params.ziliaoshangchuanContent},'%')
+            </if>
+            <if test="params.ziliaoshangchuanYesnoTypes != null and params.ziliaoshangchuanYesnoTypes != ''">
+                and a.ziliaoshangchuan_yesno_types = #{params.ziliaoshangchuanYesnoTypes}
+            </if>
+            <if test=" params.ziliaoshangchuanYesnoText != '' and params.ziliaoshangchuanYesnoText != null and params.ziliaoshangchuanYesnoText != 'null' ">
+                and a.ziliaoshangchuan_yesno_text like CONCAT('%',#{params.ziliaoshangchuanYesnoText},'%')
+            </if>
+
+        </where>
+
+        order by a.${params.orderBy} desc 
+    </select>
+
+</mapper>
